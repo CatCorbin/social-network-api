@@ -145,4 +145,86 @@ const reactionSchema = new mongoose.Schema({
     }
   });
   
- 
+  app.post('/api/users/:userId/friends/:friendId', async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params.userId,
+        { $addToSet: { friends: req.params.friendId } },
+        { new: true }
+      );
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  app.delete('/api/users/:userId/friends/:friendId', async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params.userId,
+        { $pull: { friends: req.params.friendId } },
+        { new: true }
+      );
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  app.get('/api/thoughts', async (req, res) => {
+    try {
+      const thoughts = await Thought.find();
+      res.json(thoughts);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  
+  app.get('/api/thoughts/:thoughtId', async (req, res) => {
+    try {
+      const thought = await Thought.findById(req.params.thoughtId);
+      res.json(thought);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  
+  app.post('/api/thoughts', async (req, res) => {
+    try {
+      const newThought = await Thought.create(req.body);
+      await User.findByIdAndUpdate(req.body.userId, {
+        $push: { thoughts: newThought._id },
+      });
+      res.json(newThought);
+    } catch (error) {
+      res.status(400).json({ error: 'Invalid Request Body' });
+    }
+  });
+  
+  
+  app.put('/api/thoughts/:thoughtId', async (req, res) => {
+    try {
+      const updatedThought = await Thought.findByIdAndUpdate(
+        req.params.thoughtId,
+        req.body,
+        { new: true }
+      );
+      res.json(updatedThought);
+    } catch (error) {
+      res.status(400).json({ error: 'Invalid Request Body' });
+    }
+  });
+  
+  
+  app.delete('/api/thoughts/:thoughtId', async (req, res) => {
+    try {
+      const deletedThought = await Thought.findByIdAndDelete(
+        req.params.thoughtId
+      );
+      res.json(deletedThought);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
