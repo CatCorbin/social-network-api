@@ -81,8 +81,6 @@ const reactionSchema = new mongoose.Schema({
     ],
   });
   
-  
-  // Virtuals and Schema Settings
   userSchema.virtual('friendCount').get(function () {
     return this.friends.length;
   });
@@ -91,4 +89,60 @@ const reactionSchema = new mongoose.Schema({
   thoughtSchema.virtual('reactionCount').get(function () {
     return this.reactions.length;
   });
+
+  const User = mongoose.model('User', userSchema);
+  const Thought = mongoose.model('Thought', thoughtSchema);
+  app.get('/api/users', async (req, res) => {
+    try {
+      const users = await User.find();
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
   
+  
+  app.get('/api/users/:userId', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId)
+        .populate('thoughts')
+        .populate('friends');
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+  
+  app.post('/api/users', async (req, res) => {
+    try {
+      const newUser = await User.create(req.body);
+      res.json(newUser);
+    } catch (error) {
+      res.status(400).json({ error: 'Invalid Request Body' });
+    }
+  });
+  
+  app.put('/api/users/:userId', async (req, res) => {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.userId,
+        req.body,
+        { new: true }
+      );
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(400).json({ error: 'Invalid Request Body' });
+    }
+  });
+
+  app.delete('/api/users/:userId', async (req, res) => {
+    try {
+      const deletedUser = await User.findByIdAndDelete(req.params.userId);
+      res.json(deletedUser);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
+ 
