@@ -144,7 +144,7 @@ const reactionSchema = new mongoose.Schema({
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  
+
   app.post('/api/users/:userId/friends/:friendId', async (req, res) => {
     try {
       const user = await User.findByIdAndUpdate(
@@ -227,4 +227,42 @@ const reactionSchema = new mongoose.Schema({
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  
+  app.post('/api/thoughts/:thoughtId/reactions', async (req, res) => {
+    try {
+      const thought = await Thought.findById(req.params.thoughtId);
+      if (!thought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+ 
+      const newReaction = {
+        reactionBody: req.body.reactionBody,
+        username: req.body.username,
+      };
+ 
+      thought.reactions.push(newReaction);
+      await thought.save();
+ 
+      res.json(thought);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+ 
+  app.delete('/api/thoughts/:thoughtId/reactions/:reactionId', async (req, res) => {
+    try {
+      const thought = await Thought.findById(req.params.thoughtId);
+      if (!thought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+ 
+      thought.reactions = thought.reactions.filter(
+        (reaction) => reaction.reactionId.toString() !== req.params.reactionId
+      );
+ 
+      await thought.save();
+ 
+      res.json(thought);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
