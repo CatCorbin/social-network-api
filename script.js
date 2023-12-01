@@ -12,6 +12,7 @@ mongoose.connect('mongodb://localhost/social-network', {
   useCreateIndex: true,
   useFindAndModify: false,
 });
+
 const reactionSchema = new mongoose.Schema({
     reactionId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -266,7 +267,7 @@ const reactionSchema = new mongoose.Schema({
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  
+
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });
