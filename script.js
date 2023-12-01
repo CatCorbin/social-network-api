@@ -9,8 +9,6 @@ app.use(express.json());
 mongoose.connect('mongodb://localhost/social-network', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
 });
 
 const reactionSchema = new mongoose.Schema({
