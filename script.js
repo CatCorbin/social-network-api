@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost/social-network', {
+mongoose.connect('mongodb://127.0.0.1/social-network', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -93,7 +93,7 @@ const reactionSchema = new mongoose.Schema({
   const Thought = mongoose.model('Thought', thoughtSchema);
   app.get('/api/users', async (req, res) => {
     try {
-      const users = await User.find();
+      const users = await User.find().populate("thoughts").populate("friends");
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
@@ -203,16 +203,16 @@ const reactionSchema = new mongoose.Schema({
   
   
   app.put('/api/thoughts/:thoughtId', async (req, res) => {
-    try {
+   // try {
       const updatedThought = await Thought.findByIdAndUpdate(
         req.params.thoughtId,
         req.body,
         { new: true }
       );
       res.json(updatedThought);
-    } catch (error) {
-      res.status(400).json({ error: 'Invalid Request Body' });
-    }
+    // } catch (error) {
+    //   res.status(400).json({ error: 'Invalid Request Body' });
+    // }
   });
   
   
