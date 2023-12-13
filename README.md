@@ -7,6 +7,7 @@
 # Links
 
 GitHub Repository: https://github.com/CatCorbin/social-network-api
+<br>
 Demo Video: https://drive.google.com/file/d/1OJDJzvG2br_oDlLZjtAyqCE-STobR_SV/view 
 
 ## Description
